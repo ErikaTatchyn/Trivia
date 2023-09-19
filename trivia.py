@@ -1,25 +1,25 @@
-import requests
-import random
-import html 
-import json
+import requests #module is used to make HTTP requests to Database API
+import random #for generating random numbers
+import html  #escaping/unescaping special characters in HTML
+import json #Parsing JSON data received from web APIs into Python objects
 
 # Function to fetch trivia questions from the Open Trivia Database API
-def get_trivia_questions():
+def get_trivia_questions(): 
     url = "https://opentdb.com/api.php"
     params = {
         "amount": 10,
-        "category": 18,
+        "category": 18, #computers
         "difficulty": "easy",
         "type": "multiple",
     }
 
-    response = requests.get(url, params=params)
-    data = response.json()
-    return data.get("results", [])
+    response = requests.get(url, params=params) #HTTP GET request to the 'Open Trivia Database' API using the specified URL and parameters
+    data = response.json()#receive a JSON response from the API, which contains trivia questions and related data
+    return data.get("results", []) #extract relevant information from the JSON response, including questions, answer choices, and correct answers
 
 # Function to decode HTML entities
 def decode_html_entities(text):
-    return html.unescape(text).replace("&#039;", "'")
+    return html.unescape(text)
 
 # Function to display and process a trivia question
 def ask_question(question, options):
@@ -29,7 +29,7 @@ def ask_question(question, options):
     print(question)
     random.shuffle(options)
     
-    for i, option in enumerate(options, start=1):
+    for i, option in enumerate(options, start=1): #built-in Python function that is used to iterate over a sequence
         print(f"{i}. {option}")
 
     user_answer = input("Enter the number of your answer: ")
@@ -42,7 +42,7 @@ def ask_question(question, options):
             raise ValueError("Invalid input")
     except ValueError:
         print("Invalid input. Please enter a valid number.")
-        return ask_question(question, options)
+        return ask_question(question, options) #recursion
 
 # Function to play the trivia game
 def play_trivia_game():
@@ -73,5 +73,4 @@ def save_results(total_questions, user_score):
         file.write(f"Total Questions: {total_questions}\n")
         file.write(f"User Score: {user_score}\n\n")
 
-if __name__ == "__main__":
-    play_trivia_game()
+play_trivia_game()
