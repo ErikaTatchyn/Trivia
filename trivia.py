@@ -1,7 +1,7 @@
 import requests #module is used to make HTTP requests to Database API
 import random #for generating random numbers
 import html  #escaping/unescaping special characters in HTML
-import json #Parsing JSON data received from web APIs into Python objects
+import json #Parsing JSON data received from web APIs into Python dictionaries
 
 # Function to fetch trivia questions from the Open Trivia Database API
 def get_trivia_questions(): 
@@ -14,7 +14,7 @@ def get_trivia_questions():
     }
 
     response = requests.get(url, params=params) #HTTP GET request to the 'Open Trivia Database' API using the specified URL and parameters
-    data = response.json()#receive a JSON response from the API, which contains trivia questions and related data
+    data = response.json() #receive a JSON response from the API, which contains trivia questions and related data
     return data.get("results", []) #extract relevant information from the JSON response, including questions, answer choices, and correct answers
 
 # Function to decode HTML entities
@@ -32,17 +32,20 @@ def ask_question(question, options):
     for i, option in enumerate(options, start=1): #built-in Python function that is used to iterate over a sequence
         print(f"{i}. {option}")
 
-    user_answer = input("Enter the number of your answer: ")
+    while True:
+        user_answer = input("Enter the number of your answer: ")
 
-    try:
-        user_answer = int(user_answer)
-        if 1 <= user_answer <= len(options):
-            return options[user_answer - 1]
-        else:
-            raise ValueError("Invalid input")
-    except ValueError:
-        print("Invalid input. Please enter a valid number.")
-        return ask_question(question, options) #recursion
+        try:
+            user_answer = int(user_answer)
+            if 1 <= user_answer <= len(options):
+                return options[user_answer - 1]
+            else:
+                raise ValueError("Invalid input")
+        except ValueError:
+            print("Invalid input. Please enter a valid number.")
+            continue 
+
+        break
 
 # Function to play the trivia game
 def play_trivia_game():
@@ -51,9 +54,9 @@ def play_trivia_game():
     score = 0
 
     for question_data in questions:
-        question = question_data["question"]
-        correct_answer = question_data["correct_answer"]
-        incorrect_answers = question_data["incorrect_answers"]
+        question = decode_html_entities(question_data["question"])
+        correct_answer = decode_html_entities(question_data["correct_answer"])
+        incorrect_answers = [decode_html_entities(option) for option in question_data["incorrect_answers"]]
         options = incorrect_answers + [correct_answer]
 
         user_choice = ask_question(question, options)
