@@ -17,9 +17,19 @@ def get_trivia_questions():
     data = response.json() #receive a JSON response from the API, which contains trivia questions and related data
     return data.get("results", []) #extract relevant information from the JSON response, including questions, answer choices, and correct answers
 
-# Function to decode HTML entities
 def decode_html_entities(text):
-    return html.unescape(text)
+    html_entities = {
+        "&amp;": "&",
+        "&lt;": "<",
+        "&gt;": ">",
+        "&quot;": "\"",
+        "&#039;": "'",
+    }
+
+    for entity, char in html_entities.items():
+        text = text.replace(entity, char)
+
+    return text
 
 # Function to display and process a trivia question
 def ask_question(question, options):
@@ -76,4 +86,5 @@ def save_results(total_questions, user_score):
         file.write(f"Total Questions: {total_questions}\n")
         file.write(f"User Score: {user_score}\n\n")
 
-play_trivia_game()
+if __name__ == "__main__":
+    play_trivia_game()
